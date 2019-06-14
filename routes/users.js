@@ -32,7 +32,7 @@ router.post('/login', function(req, res, next) {
       console.log(result.action);
       console.log(result.action.status[0]);
       if(result.action.status[0] == "ok")
-      res.json({status : true ,loginId : result.action.user_id[0]});
+      res.json(JSON.stringify({status : true ,loginId : result.action.user_id[0]}));
       else
       res.json({status : false});
 
