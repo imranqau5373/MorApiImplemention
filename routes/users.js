@@ -29,7 +29,12 @@ router.post('/login', function(req, res, next) {
 
   request(options, function (error, response, body) {
     parseString(body, function (err, result) {
-      res.json(result.action);
+      console.log(result.action);
+      console.log(result.action.status[0]);
+      if(result.action.status[0] == "ok")
+      res.json({status : true ,loginId : result.action.user_id[0]});
+      else
+      res.json({status : false});
 
     });
 
