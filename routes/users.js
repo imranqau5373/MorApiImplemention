@@ -39,20 +39,21 @@ router.post('/login', function(req, res, next) {
 });
 
 router.post('/register', function(req, res, next) {
-  console.log(req.body);
+  let registerData = req.body;
+  console.log(registerData.body);
   var options = { method: 'POST',
   url: 'http://62.138.16.114/billing/api/user_register?id=385c83488c',
   qs: 
    { 
-     username: req.body.username,
-     password: req.body.password,
-     password2: req.body.password2,
-     first_name: req.body.first_name,
-     last_name: req.body.last_name,
-     country_id: req.body.country_id,
-     email: req.body.email,
-     device_type: req.body.device_type,
-     currency : req.body.currency_id
+     username: registerData.body.username,
+     password: registerData.body.password,
+     password2: registerData.body.password2,
+     first_name: registerData.body.firstname,
+     last_name: registerData.body.lastname,
+     country_id: registerData.body.country_id,
+     email: registerData.body.email,
+     device_type: registerData.body.device_type,
+     currency : registerData.body.currency_id
      },
   headers: 
    { 'cache-control': 'no-cache' } };
