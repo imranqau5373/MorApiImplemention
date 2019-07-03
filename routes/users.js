@@ -5,7 +5,7 @@ var request = require("request");
 
 var parseString = require('xml2js').parseString;
 
-var config = require('../config/configuration.js')
+var config = require('../config/configuration.js');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -40,7 +40,6 @@ router.post('/login', function(req, res, next) {
 
 router.post('/register', function(req, res, next) {
   let registerData = req.body;
-  console.log(registerData.body);
   var options = { method: 'POST',
   url: 'http://62.138.16.114/billing/api/user_register?id=385c83488c',
   qs: 
@@ -66,5 +65,32 @@ request(options, function (error, response, body) {
   });
 });
 });
+
+router.post('/details', function(req, res, next) {
+
+  var options = { method: 'POST',
+  url: 'http://62.138.16.114/billing/api/user_details_get',
+  qs: { u:req.body.username, user_id: req.body.user_id },
+  headers: 
+   { 'cache-control': 'no-cache' } };
+
+  request(options, function (error, response, body) {
+    parseString(body, function (err, result) {
+      res.json(result.page);
+    });
+
+});
+  
+});
+
+//this api method returns the euro amount in dollar rates.
+router.get('/getcurrency', function(req, res, next) {
+  let dollarRate =config.dollarRate;
+  let amount = req.query.amount;
+  let totalAmount = amount * dollarRate;
+  res.json(totalAmount);
+});
+
+
 
 module.exports = router;
