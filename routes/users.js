@@ -19,10 +19,11 @@ router.get('/login', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
+  let loginData = req.body;
   var options = { method: 'POST',
 
   url: 'http://62.138.16.114/billing/api/user_login',
-  qs: { u:req.body.username, p: req.body.password},
+  qs: { u:loginData.body.username, p: loginData.body.password},
   headers: 
    { 'cache-control': 'no-cache' } };
 
@@ -67,15 +68,18 @@ request(options, function (error, response, body) {
 });
 
 router.post('/details', function(req, res, next) {
-
+  let userDetails = req.body;
+  console.log(userDetails.body.userName);
+  //res.json('test');
   var options = { method: 'POST',
   url: 'http://62.138.16.114/billing/api/user_details_get',
-  qs: { u:req.body.username, user_id: req.body.user_id },
+  qs: { u:userDetails.body.userName, user_id: userDetails.body.userId },
   headers: 
    { 'cache-control': 'no-cache' } };
 
   request(options, function (error, response, body) {
     parseString(body, function (err, result) {
+      console.log(result.page);
       res.json(result.page);
     });
 
