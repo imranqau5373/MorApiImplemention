@@ -84,7 +84,6 @@ router.get('/', function(req, res, next) {
     create_payment_json.transactions[0].amount.currency =  checkoutData.body.currency;
     let processingFee = checkoutData.body.amount * 0.015;
     let totalAmount = (parseInt(checkoutData.body.amount) + processingFee).toFixed(2);
-    console.log(totalAmount);
     // //total amount and price must be the same. other wise getting validation errors.
     create_payment_json.transactions[0].amount.total =  totalAmount;
     create_payment_json.transactions[0].description =  checkoutData.body.amount;
@@ -97,12 +96,9 @@ router.get('/', function(req, res, next) {
     //res.json(create_payment_json);
     paypal.payment.create(create_payment_json, function (error, payment) {
         if (error) {
-            console.log('error is ',error.response.details);
-            console.log(error);
+            console.log('error in payment create  ',error.response.details);
         } else {
-            console.log(payment);
-            let redirectUrl = ''; 
-
+            let redirectUrl = '';
             for (var index = 0; index < payment.links.length; index++) {
                 if (payment.links[index].rel === 'approval_url') {
                     var approval_url = payment.links[index].href;
@@ -111,6 +107,7 @@ router.get('/', function(req, res, next) {
             }
             console.log('Redirect url is'+redirectUrl);
             res.json(redirectUrl);
+            
         }
     });
 });
@@ -121,6 +118,36 @@ router.get('/cancelPayment', function(req, res, next) {
 
   router.get('/paymentmessage', function(req, res, next) {
     res.json('success payment');
+  });
+
+  router.post('/successPayment', function(req, res, next) {
+    let paymentInformation = req.body;
+    console.log(paymentInformation.body);
+    let paymentToken = paymentInformation.body.paymentId;
+    execute_payment_json.payer_id = paymentInformation.body.payerId;
+    let userId = paymentInformation.body.userId;
+    let currency = execute_payment_json.transactions[0].amount.currency;
+    //res.json('Payment message.');
+    paypal.payment.execute(paymentToken,execute_payment_json, function (error, billingAgreement) {
+        if (error) {
+            console.log(error);
+            throw error;
+        } else {
+          let blanaceUpdate = billingAgreement.transactions[0].description;
+            var options = { method: 'GET',
+            url: 'http://62.138.16.114/billing/api/payment_create',
+            qs: { u: 'admin', user_id: userId,p_currency:currency,paymenttype:'Website',tax_in_amount:0, amount: blanaceUpdate, hash: '385c83488c' },
+            headers: 
+             { 'Postman-Token': '4a76cbbd-36ad-4434-9eb8-45bf6ae18086',
+               'cache-control': 'no-cache' } };
+          request(options, function (error, response, body) {
+            if (error) console.log(error);
+            console.log(body);
+            res.json(body);
+          });
+            
+        }
+    });
   });
 
 

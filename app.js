@@ -8,6 +8,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var sipRouter = require('./routes/sip');
 var paymentRouter = require('./routes/payment');
+var callRecordRouter = require('./routes/callrecords');
+var sendEmailRouter = require('./routes/sendemail');
+
 
 
 var app = express();
@@ -34,6 +37,9 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/sip', sipRouter);
 app.use('/payment', paymentRouter);
+app.use('/callrecords',callRecordRouter);
+app.use('/sendemail',sendEmailRouter);
+
 
 
 
