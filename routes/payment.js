@@ -36,10 +36,10 @@ var create_payment_json = {
         "payment_method": "paypal"
     },
     "redirect_urls": {
-        "return_url": "http://localhost:3000/#/paymentsuccess",
-        "cancel_url": "http://localhost:3000/paymentinteg/cancelPayment",
-        // "return_url": "http://62.138.16.114:3000/paymentinteg/successPayment",
-        // "cancel_url": "http://62.138.16.114:3000/paymentinteg/cancelPayment",
+        "return_url": "#/paymentsuccess",
+        "cancel_url": "#/paymentinteg/cancelPayment",
+        // "return_url": "paymentinteg/successPayment",
+        // "cancel_url": "paymentinteg/cancelPayment",
     },
     "transactions": [{
         "item_list": {
