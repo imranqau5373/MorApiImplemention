@@ -25,7 +25,6 @@ router.get('/', function(req, res, next) {
 
 router.post('/sipdevice', function(req, res, next) {
     let userData = req.body;
-    console.log(userData.body.user_id);
     var options = { method: 'POST',
     url: config.apiUrl +'devices_get?',
     qs: 
@@ -35,14 +34,12 @@ router.post('/sipdevice', function(req, res, next) {
        hash: config.hash },
     headers: 
      { 'cache-control': 'no-cache' } };
-  console.log(options.url);
   request(options, function (error, response, body) {
     parseString(body, function (err, result) {
         if(!result.page.error){
             getDevices(result.page);
             if(listOfIds.length > 0)
             {
-              console.log('list of id is',listOfIds);
               deviceData = [];
               getDeviceInformation(listOfIds,function (data){
                 res.json(deviceData);
@@ -61,7 +58,6 @@ router.post('/sipdevice', function(req, res, next) {
 
   router.post('/deviceInformation', function(req, res, next) {
     let deviceId = req.body.deviceId;
-    console.log(deviceId);
     var options = { method: 'POST',
     url: 'http://62.138.16.114/billing/api/device_details_get',
     qs: { u: 'admin', device_id: deviceId, hash: config.hashkey },
@@ -77,9 +73,48 @@ router.post('/sipdevice', function(req, res, next) {
         device.password = result.page.secret[0];
         device.deviceId = deviceId;
         device.ipAddress = result.page.host[0];
-        console.log(device);
         res.json(device);
   
+      });
+    });
+  });
+
+  router.post('/addIPAddress', function(req, res, next) {
+    let ipData = req.body.body;
+    var options = { method: 'POST',
+    url: config.apiUrl +'device_update?',
+    qs: 
+     { 
+       u: config.user,
+       device: ipData.deviceId,
+       authentication : config.authentication,
+       host : ipData.ipAddress,
+       port: config.port,
+       hash: config.hash },
+    headers: 
+     { 'cache-control': 'no-cache' } };
+  
+  request(options, function (error, response, body) {
+    parseString(body, function (err, result) {
+      res.json(result.page);
+    });
+  });
+  });
+
+  router.post('/addDevice', function(req, res, next) {
+    let userData = req.body;
+    var options = { method: 'POST',
+    url: 'http://62.138.16.114/billing/api/device_create?',
+    qs: 
+     { 
+        u: config.user,
+        user_id: userData.body.user_id,
+       hash: config.hash },
+    headers: 
+     { 'cache-control': 'no-cache' } };
+    request(options, function (error, response, body) {
+      parseString(body, function (err, result) {
+        res.json(result.page);
       });
     });
   });
@@ -96,9 +131,7 @@ router.post('/sipdevice', function(req, res, next) {
   function getDeviceInformation(listOfIds,callback){
 
     for(const deviceId of listOfIds){
-      console.log('device id is',deviceId);
       getDeviceData(deviceId,function(deviceInfo){
-        console.log(deviceData.length);
         if(deviceData.length == listOfIds.length)
           callback(deviceData);
       });
@@ -109,7 +142,6 @@ router.post('/sipdevice', function(req, res, next) {
   }
 
   function getDeviceData(deviceId,callback){
-    console.log('In get device data',deviceId);
     var options = { method: 'POST',
     url: 'http://62.138.16.114/billing/api/device_details_get',
     qs: { u: 'admin', device_id: deviceId, hash: config.hashkey },

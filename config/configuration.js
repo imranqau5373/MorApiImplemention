@@ -3,4 +3,6 @@ module.exports = {
     dollarRate : 1.11962,
     user : 'admin',
     apiUrl : 'http://62.138.16.114/billing/api/',
+    authentication : '1',
+    port : '5060',
 }
