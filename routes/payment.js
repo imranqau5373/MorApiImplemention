@@ -36,8 +36,8 @@ var create_payment_json = {
         "payment_method": "paypal"
     },
     "redirect_urls": {
-        "return_url": "#/paymentsuccess",
-        "cancel_url": "#/paymentinteg/cancelPayment",
+        "return_url": "http://localhost:3000/#/paymentsuccess",
+        "cancel_url": "http://localhost:3000/payment/cancelPayment",
         // "return_url": "paymentinteg/successPayment",
         // "cancel_url": "paymentinteg/cancelPayment",
     },
@@ -121,33 +121,34 @@ router.get('/cancelPayment', function(req, res, next) {
   });
 
   router.post('/successPayment', function(req, res, next) {
+    console.log('In success payment.');
     let paymentInformation = req.body;
     console.log(paymentInformation.body);
     let paymentToken = paymentInformation.body.paymentId;
     execute_payment_json.payer_id = paymentInformation.body.payerId;
     let userId = paymentInformation.body.userId;
     let currency = execute_payment_json.transactions[0].amount.currency;
-    //res.json('Payment message.');
-    paypal.payment.execute(paymentToken,execute_payment_json, function (error, billingAgreement) {
-        if (error) {
-            console.log(error);
-            throw error;
-        } else {
-          let blanaceUpdate = billingAgreement.transactions[0].description;
-            var options = { method: 'GET',
-            url: 'http://62.138.16.114/billing/api/payment_create',
-            qs: { u: 'admin', user_id: userId,p_currency:currency,paymenttype:'Website',tax_in_amount:0, amount: blanaceUpdate, hash: '385c83488c' },
-            headers: 
-             { 'Postman-Token': '4a76cbbd-36ad-4434-9eb8-45bf6ae18086',
-               'cache-control': 'no-cache' } };
-          request(options, function (error, response, body) {
-            if (error) console.log(error);
-            console.log(body);
-            res.json(body);
-          });
+    res.json('Payment message.');
+    // paypal.payment.execute(paymentToken,execute_payment_json, function (error, billingAgreement) {
+    //     if (error) {
+    //         console.log(error);
+    //         throw error;
+    //     } else {
+    //       let blanaceUpdate = billingAgreement.transactions[0].description;
+    //         var options = { method: 'GET',
+    //         url: 'http://62.138.16.114/billing/api/payment_create',
+    //         qs: { u: 'admin', user_id: userId,p_currency:currency,paymenttype:'Website',tax_in_amount:0, amount: blanaceUpdate, hash: '385c83488c' },
+    //         headers: 
+    //          { 'Postman-Token': '4a76cbbd-36ad-4434-9eb8-45bf6ae18086',
+    //            'cache-control': 'no-cache' } };
+    //       request(options, function (error, response, body) {
+    //         if (error) console.log(error);
+    //         console.log(body);
+    //         res.json(body);
+    //       });
             
-        }
-    });
+    //     }
+    // });
   });
 
 
